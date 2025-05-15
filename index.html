@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Permainan Suit</title>
+  <style>
+    body {
+      background-color: rgb(87, 87, 215);
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bold;
+      color: white;
+    }
+
+    .play-icon {
+      height: 70px;
+    }
+
+    .play-button {
+      background-color: transparent;
+      border: 5px solid rgb(242, 170, 35);
+      border-radius: 50%;
+      height: 120px;
+      width: 120px;
+      margin: 7px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .reset-score {
+      font-weight: bold;
+      padding: 5px 15px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Main Suit Lawan Komputer</h1>
+
+  <button onclick="playGame('jempol')" class="play-button">
+    <img src="./assets/jempol-image.png" alt="jempol image" class="play-icon" />
+  </button>
+
+  <button onclick="playGame('kelingking')" class="play-button">
+    <img src="./assets/kelingking-image.png" alt="kelingking image" class="play-icon"/>
+  </button>
+
+  <button onclick="playGame('telunjuk')" class="play-button">
+    <img src="./assets/telunjuk-image.png" alt="telunjuk image" class="play-icon" />
+  </button>
+
+  <p class="js-result"></p>
+  <p class="js-picked"></p>
+  <p class="js-score">Menang: 0, Kalah: 0, Seri: 0.</p>
+
+  <button class="reset-score" onclick="resetScore()">
+    Reset Score
+  </button>
+  
+
+  <script>
+    let scoreGame = JSON.parse(localStorage.getItem('scoreSave')) || {
+      menang: 0,
+      kalah: 0,
+      seri: 0
+    }
+
+    function playGame(userMove) {
+      const randomNumber = Math.random();
+
+      let computerMove = '';
+      if (randomNumber >= 0 && randomNumber < 1/3) {
+        computerMove = 'jempol';
+      } else if (randomNumber >= 1/3 && randomNumber < 2/3) {
+        computerMove = 'kelingking';
+      } else if (randomNumber >= 2/3 && randomNumber <= 1) {
+        computerMove = 'telunjuk';
+      }
+
+      let resultGame = '';
+      if (userMove === 'jempol') {
+        if (computerMove === 'jempol') {
+          resultGame = 'Seri';
+        } else if (computerMove === 'kelingking') {
+          resultGame = 'Kamu kalah';
+        } else if (computerMove === 'telunjuk') {
+          resultGame = 'Kamu menang';
+        }
+      } else if (userMove === 'kelingking') {
+        if (computerMove === 'jempol') {
+          resultGame = 'Kamu menang';
+        } else if (computerMove === 'kelingking') {
+          resultGame = 'Seri';
+        } else if (computerMove === 'telunjuk') {
+          resultGame = 'Kamu kalah';
+        }
+      } else if (userMove === 'telunjuk') {
+        if (computerMove === 'jempol') {
+          resultGame = 'Kamu kalah';
+        } else if (computerMove === 'kelingking') {
+          resultGame = 'Kamu menang';
+        } else if (computerMove === 'telunjuk') {
+          resultGame = 'Seri';
+        }
+      }
+
+      document.querySelector('.js-result')
+        .innerHTML = `${resultGame} <img src="./assets/${resultGame}-image.png" class="play-icon" />`;
+
+      document.querySelector('.js-picked')
+        .innerHTML = `Kamu <img src="./assets/${userMove}-image.png" class="play-icon" /> lawan <img src="./assets/${computerMove}-image.png" class="play-icon" /> komputer`;
+      
+      if (resultGame === 'Kamu menang') {
+        scoreGame.menang++;
+      } else if (resultGame === 'Kamu kalah') {
+        scoreGame.kalah++;
+      } else if (resultGame === 'Seri') {
+        scoreGame.seri++;
+      }
+
+      document.querySelector('.js-score')
+        .innerHTML = `Menang: ${scoreGame.menang}, Kalah: ${scoreGame.kalah}, Seri: ${scoreGame.seri}.`;
+
+      localStorage.setItem('scoreSave', JSON.stringify(scoreGame));
+
+    }
+
+    function resetScore() {
+      localStorage.removeItem('scoreSave');
+
+      scoreGame = {
+        menang: 0,
+        kalah: 0,
+        seri: 0
+      }
+
+      document.querySelector('.js-result')
+        .innerHTML = 'Score di-reset ulang';
+
+      document.querySelector('.js-picked')
+        .innerHTML = ``;
+      
+      document.querySelector('.js-score')
+        .innerHTML = `Menang: ${scoreGame.menang}, Kalah: ${scoreGame.kalah}, Seri: ${scoreGame.seri}.`;
+    }
+
+  </script>
+</body>
+</html>
